@@ -1,4 +1,4 @@
-local local_version = "1.0"
+local local_version = "1.1"
 ---@diagnostic disable-next-line: undefined-global
 local local_script_name = GetScriptName()
 local github_version_url = "https://raw.githubusercontent.com/m0nsterJ/Aimware-LUAs/main/Aimbot%20Target%20ESP%20Flag/version.txt"
