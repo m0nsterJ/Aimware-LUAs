@@ -1,3 +1,21 @@
+local local_version = "1.1"
+---@diagnostic disable-next-line: undefined-global
+local local_script_name = GetScriptName()
+local github_version_url = "https://raw.githubusercontent.com/m0nsterJ/Aimware-LUAs/main/Minimum%20Damage%20Override/version.txt"
+local github_version = http.Get(github_version_url)
+local github_source_url = "https://raw.githubusercontent.com/m0nsterJ/Aimware-LUAs/main/Minimum%20Damage%20Override/MinimumDamageOverride.lua"
+
+if local_version ~= tostring(github_version) then
+    print("Now updating " ..local_script_name)
+    file.Delete(local_script_name)
+    print("Successfully deleted old version of " ..local_script_name)
+    file.Write(local_script_name, http.Get(github_source_url))
+    local_version = github_version
+    print("Successfully updated " ..local_script_name)
+---@diagnostic disable-next-line: undefined-global
+    UnloadScript(local_script_name)
+end
+
 local rbot_ref = gui.Reference("Ragebot")
 local rbot_tab = gui.Tab(rbot_ref, "min_dmg_override", "Min Damage Override")
 local min_dmg_box = gui.Groupbox(rbot_tab, "Minimum Damage Override", 15, 15, 292.5, 250)
@@ -93,6 +111,7 @@ local current_weapon_hitscan
 
 local function condition_handler()
 
+    run_funcs = false
     lp = entities.GetLocalPlayer()
 
     screen_w, screen_h = draw.GetScreenSize()
@@ -100,8 +119,6 @@ local function condition_handler()
 
     if lp ~= nil and lp:IsAlive() then
         run_funcs = true
-    else
-        run_funcs = false
     end
 end
 
@@ -131,21 +148,20 @@ end
 local function min_dmg_override()
 
     if min_dmg_override_check:GetValue() then
+        min_dmg_state = original_dmg
         if min_dmg_override_toggle_check_b:GetValue() then
             min_dmg_state = override_dmg
-        else
-            min_dmg_state = original_dmg
         end
 
         for i = 1, 5 do
             gui.SetValue("rbot.hitscan.accuracy." .. weapons[i] .. ".mindamage", min_dmg_state[i]:GetValue())
 
+            override_dmg[i]:SetInvisible(true)
+            original_dmg[i]:SetInvisible(false)
+
             if min_dmg_state == override_dmg then
                 override_dmg[i]:SetInvisible(false)
                 original_dmg[i]:SetInvisible(true)
-            else
-                override_dmg[i]:SetInvisible(true)
-                original_dmg[i]:SetInvisible(false)
             end
         end
     end
