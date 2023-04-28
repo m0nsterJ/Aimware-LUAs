@@ -1,4 +1,4 @@
-local local_version = "1.0"
+local local_version = "1.1"
 ---@diagnostic disable-next-line: undefined-global
 local local_script_name = GetScriptName()
 local github_version_url = "https://raw.githubusercontent.com/m0nsterJ/Aimware-LUAs/main/Desync%20Inverter/version.txt"
@@ -17,22 +17,23 @@ if local_version ~= tostring(github_version) then
 end
 
 local multiplier = 1
-local inverter_key_b = gui.Keybox((gui.Reference("Ragebot", "Anti-Aim", "Advanced")), "inverter", "Invert Key", 0)
+local inverter_key_b = gui.Keybox((gui.Reference("Ragebot", "Anti-Aim", "Advanced")), "inverter_key_b", "Desync Inverter", 0)
 
 inverter_key_b:SetDescription("Invert your base rotation angle.")
 
 local function inverter()
-    
-    if inverter_key_b:GetValue() ~= 0 then
-        if input.IsButtonPressed(inverter_key_b:GetValue()) then
 
-            multiplier = -1
-        else
-            multiplier = 1
-        end
-
-        gui.SetValue("rbot.antiaim.base.rotation", gui.GetValue("rbot.antiaim.base.rotation") * multiplier)
+    local local_player = entities.GetLocalPlayer()
+    if not local_player ~= nil and not local_player:IsAlive() then
+        return
     end
+
+    if inverter_key_b:GetValue() ~= 0 and input.IsButtonPressed(inverter_key_b:GetValue()) then
+        multiplier = -1
+    else
+        multiplier = 1
+    end
+    gui.SetValue("rbot.antiaim.base.rotation", gui.GetValue("rbot.antiaim.base.rotation") * multiplier)
 end
 
 callbacks.Register("Draw", inverter)
